@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,6 +20,7 @@ import lombok.Data;
 public class CustomersCustomer {
  
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(unique=true)
 	private String user_id;
@@ -42,4 +45,6 @@ public class CustomersCustomer {
 	    user_id = prefix + "-" + uuid.substring(0, 8);  // Limiting UUID to 16 characters
 	    return user_id;
 	}
+
+
 }

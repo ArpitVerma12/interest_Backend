@@ -2,13 +2,7 @@ package com.backend.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -17,10 +11,12 @@ import lombok.Data;
 public class Items {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String user_id;
 	private String item_name;
 	private Double weight;
+	private String unit;
 	private Double interest;
 	private LocalDateTime create_at;
 	
