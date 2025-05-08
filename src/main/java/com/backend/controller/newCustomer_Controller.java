@@ -1,5 +1,10 @@
 package com.backend.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +39,30 @@ public class newCustomer_Controller {
 	@GetMapping("/getNewCustomer")
 	public ResponseEntity<?> getNewCustomer()
 	{
+		List<NewCustomer> customers = newCustRepo.findAll();
+	    List<Map<String, Object>> resultList = new ArrayList<>();
+
+	    for (NewCustomer customer : customers) {
+	        Map<String, Object> customerData = new HashMap<>();
+	        customerData.put("user_id", customer.getUser_id());
+	        customerData.put("Name", customer.getName());
+	        customerData.put("MobileNumber", customer.getMobileNumber());
+	        customerData.put("EmailId", customer.getEmailId());
+	        customerData.put("create_at", customer.getCreate_at());
+
+        // Optionally, add information from NewCustomer
+//	        NewCustomer newCustomer = customer.getNewCustomer();
+//	        if (newCustomer != null) {
+//	            customerData.put("newCustomer_user_id", newCustomer.getUser_id());
+//	            customerData.put("newCustomer_Name", newCustomer.getName());
+//	        }
+//
+	        resultList.add(customerData);
+	    }
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("message", "Customers fetched successfully");
+	    response.put("data", resultList);
 		return ResponseEntity.ok().body(newCustRepo.findAll());
 	}
 }

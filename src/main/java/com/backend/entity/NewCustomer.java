@@ -45,4 +45,6 @@ public class NewCustomer {
 	    user_id = prefix + "-" + uuid.substring(0, 8);  // Limiting UUID to 16 characters
 	    return user_id;
 	}
+
+
 }
