@@ -37,9 +37,8 @@ public class newCustomer_Controller {
 	}
 	
 	@GetMapping("/getNewCustomer")
-	public ResponseEntity<?> getNewCustomer()
-	{
-		List<NewCustomer> customers = newCustRepo.findAll();
+	public ResponseEntity<?> getNewCustomer() {
+	    List<NewCustomer> customers = newCustRepo.findAll();
 	    List<Map<String, Object>> resultList = new ArrayList<>();
 
 	    for (NewCustomer customer : customers) {
@@ -50,19 +49,15 @@ public class newCustomer_Controller {
 	        customerData.put("EmailId", customer.getEmailId());
 	        customerData.put("create_at", customer.getCreate_at());
 
-        // Optionally, add information from NewCustomer
-//	        NewCustomer newCustomer = customer.getNewCustomer();
-//	        if (newCustomer != null) {
-//	            customerData.put("newCustomer_user_id", newCustomer.getUser_id());
-//	            customerData.put("newCustomer_Name", newCustomer.getName());
-//	        }
-//
+	        // If needed, add more fields here
+
 	        resultList.add(customerData);
 	    }
 
 	    Map<String, Object> response = new HashMap<>();
-	    response.put("message", "Customers fetched successfully");
 	    response.put("data", resultList);
-		return ResponseEntity.ok().body(newCustRepo.findAll());
+
+	    return ResponseEntity.ok(response); // <-- Fixed line
 	}
+
 }

@@ -1,7 +1,13 @@
 package com.backend.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,5 +63,42 @@ public ResponseEntity<?> addItems(@RequestBody Items item) {
     itmesRepo.save(item);
     return ResponseEntity.ok().body("Item saved successfully");
 }
+
+
+@GetMapping("/getItems")
+public ResponseEntity<?> getItems() {
+    List<Items> customers = itmesRepo.findAll();
+    List<Map<String, Object>> resultList = new ArrayList<>();
+
+    for (Items customer : customers) {
+        Map<String, Object> customerData = new HashMap<>();
+        customerData.put("user_id", customer.getUser_id());
+        customerData.put("Item_Name", customer.getItem_name());
+        customerData.put("Weight", customer.getWeight());
+        customerData.put("Unit", customer.getUnit());
+        customerData.put("Interest", customer.getInterest());
+        customerData.put("create_at", customer.getCreate_at());
+
+        // Optionally, add information from NewCustomer
+        NewCustomer newCustomer = customer.getNewCustomer();
+        CustomersCustomer CustomersCustomer = customer.getCustomersCustomer();
+        if (newCustomer != null) {
+            customerData.put("newCustomer_user_id", newCustomer.getUser_id());
+            customerData.put("newCustomer_Name", newCustomer.getName());
+        }
+        if (CustomersCustomer != null) {
+            customerData.put("CustomersCustomer_user_id", CustomersCustomer.getUser_id());
+            customerData.put("CustomersCustomer_Name", CustomersCustomer.getName());
+        }
+
+        resultList.add(customerData);
+    }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", resultList);
+
+    return ResponseEntity.ok(response);
+}
+
 
 }
