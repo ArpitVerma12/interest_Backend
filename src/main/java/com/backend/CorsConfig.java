@@ -12,9 +12,8 @@ public class CorsConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 				.allowedOriginPatterns("https://yearling-etheline-rajatve18012000-8f697a41.koyeb.app","*")
-				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+				.allowedMethods("GET", "POST", "PUT", "DELETE")
 				.allowedHeaders("*")
-				.allowCredentials(true)
-				.maxAge(3600);
+				.allowCredentials(true);
 	}
 }
