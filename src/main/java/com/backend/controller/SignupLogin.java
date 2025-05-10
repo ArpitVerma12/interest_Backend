@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.backend.Repository.*;
 import com.backend.entity.*;
 @RestController
+@RequestMapping("/auth")
 public class SignupLogin {
 	
 	@Autowired
