@@ -1,16 +1,16 @@
-//package com.backend.security;
-//
-//import io.jsonwebtoken.*;
-//
-//import java.util.Date;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//
-//@Configuration
-//public class securityConfig {
+package com.backend.security;
+
+import io.jsonwebtoken.*;
+
+import java.util.Date;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+public class securityConfig {
 //	private final String SECRET = "your_secret_key";
 //    private final long EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
 //
@@ -35,8 +35,8 @@
 //            return false;
 //        }
 //    }
-//	 @Bean
-//	    public PasswordEncoder passwordEncoder() {
-//	        return new BCryptPasswordEncoder();
-//	    }
-//}
+	 @Bean
+	    public PasswordEncoder passwordEncoder() {
+	        return new BCryptPasswordEncoder();
+	    }
+}
