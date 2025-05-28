@@ -16,6 +16,7 @@ public interface SignupLoginRepository extends JpaRepository<signup,Long> {
 	@Query(value="select * FROM signup where email_id=:email", nativeQuery=true)
 	signup findByEmailId(@Param("email") String email);
 
+	
 	signup findByMobileNumber(String mobileNumber);
 	
 

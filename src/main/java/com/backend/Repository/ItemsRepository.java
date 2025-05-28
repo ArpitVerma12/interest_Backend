@@ -4,11 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.backend.entity.Items;
+import com.backend.entity.*;
 
-public interface ItemsRepository extends JpaRepository<Items, Long>{
+public interface ItemsRepository extends JpaRepository<Mapping, Long>{
 
 	@Query(value="select * FROM items where user_id=:user_id", nativeQuery=true)
-	Items findByUserId(@Param("user_id") String user_id);
+	NewCustomerItems findByUserId(@Param("user_id") String user_id);
 
 }

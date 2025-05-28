@@ -111,6 +111,8 @@ public class customersCustomer_Controller {
 	        if (newCustomer != null) {
 	            customerData.put("newCustomer_user_id", newCustomer.getUser_id());
 	            customerData.put("newCustomer_Name", newCustomer.getName());
+	            customerData.put("newCustomer_Emailid", newCustomer.getEmailId());
+	            customerData.put("newCustomer_MobileNumber", newCustomer.getMobileNumber());
 	        }
 
 	        resultList.add(customerData);
@@ -122,6 +124,10 @@ public class customersCustomer_Controller {
 
 	    return ResponseEntity.ok(response);
 	}
+	
+	
+	
+	
 
 
 }

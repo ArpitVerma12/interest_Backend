@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.Repository.CustomersCustomerRepository;
 import com.backend.Repository.ItemsRepository;
 import com.backend.Repository.NewCustomerRepository;
-import com.backend.entity.CustomersCustomer;
-import com.backend.entity.Items;
-import com.backend.entity.NewCustomer;
+import com.backend.entity.*;
+
 
 @RestController
 public class items_controller {
@@ -31,7 +30,7 @@ private CustomersCustomerRepository CustomersCustRepo;
 private NewCustomerRepository newCustRepo;
 
 @PostMapping("/addItems")
-public ResponseEntity<?> addItems(@RequestBody Items item) {
+public ResponseEntity<?> addItems(@RequestBody Mapping item) {
     // Generate and set unique user_id
     String user_id = item.generateTemplateIdWithUUID();
     while (itmesRepo.findByUserId(user_id) != null) {
@@ -67,16 +66,16 @@ public ResponseEntity<?> addItems(@RequestBody Items item) {
 
 @GetMapping("/getItems")
 public ResponseEntity<?> getItems() {
-    List<Items> customers = itmesRepo.findAll();
+    List<Mapping> customers = itmesRepo.findAll();
     List<Map<String, Object>> resultList = new ArrayList<>();
 
-    for (Items customer : customers) {
+    for (Mapping customer : customers) {
         Map<String, Object> customerData = new HashMap<>();
         customerData.put("user_id", customer.getUser_id());
-        customerData.put("Item_Name", customer.getItem_name());
-        customerData.put("Weight", customer.getWeight());
-        customerData.put("Unit", customer.getUnit());
-        customerData.put("Interest", customer.getInterest());
+//        customerData.put("Item_Name", customer.getItem_name());
+//        customerData.put("Weight", customer.getWeight());
+//        customerData.put("Unit", customer.getUnit());
+//        customerData.put("Interest", customer.getInterest());
         customerData.put("create_at", customer.getCreate_at());
 
         // Optionally, add information from NewCustomer

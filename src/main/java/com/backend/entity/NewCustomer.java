@@ -1,18 +1,15 @@
 package com.backend.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import lombok.Data;
 
 @Data
@@ -36,8 +33,8 @@ public class NewCustomer {
 	    this.create_at = LocalDateTime.now();  
 	}
 	
-	@OneToMany(mappedBy = "newCustomer", cascade = CascadeType.ALL)
-	private List<CustomersCustomer> customersCustomer;
+//	@OneToMany(mappedBy = "newCustomer", cascade = CascadeType.ALL)
+//	private List<CustomersCustomer> customersCustomer;
 	
 	public String generateTemplateIdWithUUID() {
 	    String prefix = "C";
