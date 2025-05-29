@@ -49,7 +49,7 @@ public class SignupLogin {
 
 		signup user = null;
 
-		if (email == null && !email.isEmpty()) {
+		if (email != null && !email.isEmpty()) {
 			user = signupLoginRepo.findByEmailId(email);
 		} else if (mobileNumber != null && !mobileNumber.isEmpty()) {
 			user = signupLoginRepo.findByMobileNumber(mobileNumber);

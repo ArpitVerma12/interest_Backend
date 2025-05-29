@@ -43,7 +43,7 @@ package com.backend.entity;
 
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -64,6 +64,12 @@ public class Mapping {
 	@OneToOne
 	@JoinColumn(name="customersCust_id", referencedColumnName = "user_id", unique=true)
 	private CustomersCustomer customersCustomer;
+	
+	@OneToMany(mappedBy = "mapping", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NewCustomerItems> newCustomerItems;
+
+    @OneToMany(mappedBy = "mapping", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CustomersCustomerItems> customersCustomerItems;
 	
 	@PrePersist
 	protected void createDate() {

@@ -18,5 +18,5 @@ public class CustomersCustomerWeight {
 	
 	@ManyToOne
 	@JoinColumn(name="item_id", referencedColumnName = "id")
-	private CustomersCustomerItems CustomersCustomerItems;
+	private CustomersCustomerItems customersCustomerItems;
 }
