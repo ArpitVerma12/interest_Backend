@@ -8,7 +8,9 @@ import com.backend.entity.*;
 
 public interface MappingRepository extends JpaRepository<Mapping, Long>{
 
-	@Query(value="select * FROM Mapping where user_id=:user_id", nativeQuery=true)
-	NewCustomerItems findByUserId(@Param("user_id") String user_id);
+	@Query("select u FROM Mapping u where u.user_id=:user_id")
+	Mapping findByUserId(@Param("user_id") String user_id);
+
+	Mapping findByNewCustomer(NewCustomer existingNewCustomer);
 
 }
