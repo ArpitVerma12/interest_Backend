@@ -7,7 +7,6 @@ import java.util.Map;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +17,11 @@ import com.backend.Repository.CustomersCustomerRepository;
 import com.backend.Repository.MappingRepository;
 import com.backend.Repository.NewCustomerRepository;
 import com.backend.entity.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 
 @RestController
@@ -112,89 +115,232 @@ private NewCustomerRepository newCustRepo;
 //   
 //}
 
+//@PostMapping("/addItems")
+//public ResponseEntity<?> addItems(@RequestBody Mapping item) {
+//    try {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String json = objectMapper.writeValueAsString(item);
+//        System.out.println("Received request in saveLinkConsumer method. Request Body: " + json);
+//
+//        // Validate and set NewCustomer
+//        NewCustomer inputNewCustomer = item.getNewCustomer();
+//        if (inputNewCustomer != null || inputNewCustomer.getUser_id() != null) {
+//            //return ResponseEntity.badRequest().body("NewCustomer is required");
+//        	 NewCustomer existingNewCustomer = newCustRepo.findByUserId1(inputNewCustomer.getUser_id());
+//             if (existingNewCustomer == null) {
+//                 return ResponseEntity.badRequest().body("Invalid NewCustomer reference");
+//             }
+//        	  if (item.getNewCustomerItems() != null) {
+//                  for (NewCustomerItems nci : item.getNewCustomerItems()) {
+//                      nci.setMapping(mappingToSave);  // back-reference
+//                      if (nci.getNewCustomerWeight() != null) {
+//                          for (NewCustomerWeight weight : nci.getNewCustomerWeight()) {
+//                              weight.setNewCustomerItems(nci);
+//                          }
+//                      }
+//                  }
+//                  mappingToSave.setNewCustomerItems(item.getNewCustomerItems());
+//              }
+//        }
+//
+//       
+//
+//        // Check if a Mapping already exists for this NewCustomer
+//       // Mapping existingMapping = itmesRepo.findByNewCustomer(existingNewCustomer);
+//        //Mapping mappingToSave = (existingMapping != null) ? existingMapping : item;
+//
+//        // Set user_id (only if creating new mapping)
+//        if (existingMapping == null) {
+//            String userId = item.generateTemplateIdWithUUID();
+//            while (itmesRepo.findByUserId(userId) != null) {
+//                userId = item.generateTemplateIdWithUUID();
+//            }
+//            mappingToSave.setUser_id(userId);
+//        }
+//
+//        mappingToSave.setNewCustomer(existingNewCustomer);
+//
+//        // Validate and set CustomersCustomer (if present)
+//        if (item.getCustomersCustomer() != null && item.getCustomersCustomer().getUser_id() != null) {
+//            CustomersCustomer existingCustomersCustomer =
+//                    CustomersCustRepo.findByUserId1(item.getCustomersCustomer().getUser_id());
+//
+//            if (existingCustomersCustomer == null) {
+//                return ResponseEntity.badRequest().body("Invalid CustomersCustomer reference");
+//            }
+//
+//            mappingToSave.setCustomersCustomer(existingCustomersCustomer);
+//        }
+//
+//        // Process NewCustomerItems and their Weights
+//      
+//
+//        // Process CustomersCustomerItems and their Weights
+//        if (item.getCustomersCustomerItems() != null) {
+//            for (CustomersCustomerItems nci : item.getCustomersCustomerItems()) {
+//                nci.setMapping(mappingToSave);
+//                if (nci.getCustomersCustomerWeight() != null) {
+//                    for (CustomersCustomerWeight weight : nci.getCustomersCustomerWeight()) {
+//                        weight.setCustomersCustomerItems(nci);
+//                    }
+//                }
+//            }
+//            mappingToSave.setCustomersCustomerItems(item.getCustomersCustomerItems());
+//        }
+//
+//        // Save or update Mapping
+//        itmesRepo.save(mappingToSave);
+//
+//        return ResponseEntity.ok(existingMapping != null
+//                ? "Mapping updated successfully"
+//                : "Item and related entities saved successfully");
+//
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return ResponseEntity.status(500).body("Error occurred: " + e.getMessage());
+//    }
+//}
+
 @PostMapping("/addItems")
 public ResponseEntity<?> addItems(@RequestBody Mapping item) {
     try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(item);
-        System.out.println("Received request in saveLinkConsumer method. Request Body: " + json);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String json = objectMapper.writeValueAsString(item);
+//        System.out.println("Received request in saveLinkConsumer method. Request Body: " + json);
 
-        // Validate and set NewCustomer
-        NewCustomer inputNewCustomer = item.getNewCustomer();
-        if (inputNewCustomer == null || inputNewCustomer.getUser_id() == null) {
-            return ResponseEntity.badRequest().body("NewCustomer is required");
+        Mapping mappingToSave;
+        Mapping existingMapping = null;
+
+        NewCustomer existingNewCustomer = null;
+        CustomersCustomer existingCustomersCustomer = null;
+
+        // Fetch NewCustomer
+        if (item.getNewCustomer() != null && item.getNewCustomer().getUser_id() != null) {
+            existingNewCustomer = newCustRepo.findByUserId1(item.getNewCustomer().getUser_id());
+            if (existingNewCustomer == null) {
+                return ResponseEntity.badRequest().body("Invalid NewCustomer reference");
+            }
         }
 
-        NewCustomer existingNewCustomer = newCustRepo.findByUserId1(inputNewCustomer.getUser_id());
-        if (existingNewCustomer == null) {
-            return ResponseEntity.badRequest().body("Invalid NewCustomer reference");
+        // Fetch CustomersCustomer
+        if (item.getCustomersCustomer() != null && item.getCustomersCustomer().getUser_id() != null) {
+            existingCustomersCustomer = CustomersCustRepo.findByUserId1(item.getCustomersCustomer().getUser_id());
+            if (existingCustomersCustomer == null) {
+                return ResponseEntity.badRequest().body("Invalid CustomersCustomer reference");
+            }
         }
-
-        // Check if a Mapping already exists for this NewCustomer
-        Mapping existingMapping = itmesRepo.findByNewCustomer(existingNewCustomer);
-        Mapping mappingToSave = (existingMapping != null) ? existingMapping : item;
-
-        // Set user_id (only if creating new mapping)
+System.out.println("h1");
+        // ✅ Try to find mapping with both NewCustomer and CustomersCustomer linked together
+        if (existingNewCustomer != null && existingCustomersCustomer != null) {
+            // Ensure they are logically linked
+            NewCustomer linkedCustomer = existingCustomersCustomer.getNewCustomer();
+            if (linkedCustomer != null && linkedCustomer.getUser_id().equals(existingNewCustomer.getUser_id())) {
+                existingMapping = itmesRepo.findByNewCustomerAndCustomersCustomer(existingNewCustomer, existingCustomersCustomer);
+            }
+        }
+        System.out.println("h2");
+        // ✅ If no mapping found, try with only newCustomer
+        if (existingMapping == null && existingNewCustomer != null) {
+            existingMapping = itmesRepo.findByNewCustomer(existingNewCustomer);
+        }
+        System.out.println("h3");
+        // ✅ If still no mapping, try with only customersCustomer
+        if (existingMapping == null && existingCustomersCustomer != null) {
+            existingMapping = itmesRepo.findByCustomersCustomer(existingCustomersCustomer);
+        }
+        System.out.println("h4");
+        // ✅ If still no mapping, create new
         if (existingMapping == null) {
+            mappingToSave = new Mapping();
             String userId = item.generateTemplateIdWithUUID();
             while (itmesRepo.findByUserId(userId) != null) {
                 userId = item.generateTemplateIdWithUUID();
             }
             mappingToSave.setUser_id(userId);
+        } else {
+            mappingToSave = existingMapping;
         }
-
-        mappingToSave.setNewCustomer(existingNewCustomer);
-
-        // Validate and set CustomersCustomer (if present)
-        if (item.getCustomersCustomer() != null && item.getCustomersCustomer().getUser_id() != null) {
-            CustomersCustomer existingCustomersCustomer =
-                    CustomersCustRepo.findByUserId1(item.getCustomersCustomer().getUser_id());
-
-            if (existingCustomersCustomer == null) {
-                return ResponseEntity.badRequest().body("Invalid CustomersCustomer reference");
-            }
-
+        System.out.println("h5");
+        // Set customers
+        if (existingNewCustomer != null && mappingToSave.getNewCustomer() == null) {
+            mappingToSave.setNewCustomer(existingNewCustomer);
+        }
+        System.out.println("h6");
+        if (existingCustomersCustomer != null && mappingToSave.getCustomersCustomer() == null) {
             mappingToSave.setCustomersCustomer(existingCustomersCustomer);
         }
-
-        // Process NewCustomerItems and their Weights
-        if (item.getNewCustomerItems() != null) {
+        System.out.println("h7");
+        // Handle newCustomerItems
+        if (item.getNewCustomerItems() != null && !item.getNewCustomerItems().isEmpty()) {
+        	System.out.println("h8");
             for (NewCustomerItems nci : item.getNewCustomerItems()) {
-                nci.setMapping(mappingToSave);  // back-reference
+            	System.out.println("h9");
+                nci.setMapping(mappingToSave);
                 if (nci.getNewCustomerWeight() != null) {
                     for (NewCustomerWeight weight : nci.getNewCustomerWeight()) {
                         weight.setNewCustomerItems(nci);
+                        System.out.println("h10");
                     }
                 }
             }
-            mappingToSave.setNewCustomerItems(item.getNewCustomerItems());
+            System.out.println("h11");
+            if (mappingToSave.getNewCustomerItems() == null) {
+                mappingToSave.setNewCustomerItems(new ArrayList<>());
+            }
+            System.out.println("h12");
+            mappingToSave.getNewCustomerItems().addAll(item.getNewCustomerItems());
         }
-
-        // Process CustomersCustomerItems and their Weights
-        if (item.getCustomersCustomerItems() != null) {
-            for (CustomersCustomerItems nci : item.getCustomersCustomerItems()) {
-                nci.setMapping(mappingToSave);
-                if (nci.getCustomersCustomerWeight() != null) {
-                    for (CustomersCustomerWeight weight : nci.getCustomersCustomerWeight()) {
-                        weight.setCustomersCustomerItems(nci);
+        System.out.println("h13");
+        // Handle customersCustomerItems
+        if (item.getCustomersCustomerItems() != null && !item.getCustomersCustomerItems().isEmpty()) {
+        	System.out.println("h14");
+            for (CustomersCustomerItems cci : item.getCustomersCustomerItems()) {
+            	System.out.println("h15");
+                cci.setMapping(mappingToSave);
+                if (cci.getCustomersCustomerWeight() != null) {
+                	System.out.println("h15");
+                    for (CustomersCustomerWeight weight : cci.getCustomersCustomerWeight()) {
+                        weight.setCustomersCustomerItems(cci);
+                        System.out.println("h16");
                     }
                 }
             }
-            mappingToSave.setCustomersCustomerItems(item.getCustomersCustomerItems());
+            System.out.println("h17");
+            if (mappingToSave.getCustomersCustomerItems() == null) {
+            	System.out.println("h18");
+                mappingToSave.setCustomersCustomerItems(new ArrayList<>());
+            }
+            System.out.println("h19");
+            mappingToSave.getCustomersCustomerItems().addAll(item.getCustomersCustomerItems());
         }
+        System.out.println("h20");
+        
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); // ✅ support for LocalDateTime
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO date format
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL); // optional
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // optional
 
-        // Save or update Mapping
+            String mappingJson = objectMapper.writeValueAsString(mappingToSave);
+            System.out.println("MappingToSave Object:\n" + mappingJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         itmesRepo.save(mappingToSave);
-
+        System.out.println("h21");
         return ResponseEntity.ok(existingMapping != null
                 ? "Mapping updated successfully"
-                : "Item and related entities saved successfully");
+                : "New mapping created and data saved");
 
     } catch (Exception e) {
         e.printStackTrace();
         return ResponseEntity.status(500).body("Error occurred: " + e.getMessage());
     }
 }
+
+
+
 
 @GetMapping("/getItems")
 public ResponseEntity<?> getItems() {

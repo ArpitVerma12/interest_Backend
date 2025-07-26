@@ -13,4 +13,8 @@ public interface MappingRepository extends JpaRepository<Mapping, Long>{
 
 	Mapping findByNewCustomer(NewCustomer existingNewCustomer);
 
+	Mapping findByCustomersCustomer(CustomersCustomer existingCustomersCustomer);
+
+	Mapping findByNewCustomerAndCustomersCustomer(NewCustomer newCustomer, CustomersCustomer existingCustomersCustomer);
+
 }
