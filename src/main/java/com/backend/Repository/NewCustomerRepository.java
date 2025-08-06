@@ -1,5 +1,7 @@
 package com.backend.Repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +18,9 @@ public interface NewCustomerRepository extends JpaRepository<NewCustomer, Long>{
 
 	@Query(value="select * FROM new_customer where user_id=:user_id", nativeQuery=true)
 	NewCustomer findByUserId1(@Param("user_id") String user_id);
+
+	@Query(value="select n.*,i.* from new_customer n inner join new_customer_items i ON n.user_id=i.new_customer_id where n.address=:address")
+	List<NewCustomer> findByAddress(String address);
+
+
 }

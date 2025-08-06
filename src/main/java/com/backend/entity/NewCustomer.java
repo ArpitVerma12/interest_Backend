@@ -26,6 +26,7 @@ public class NewCustomer {
 	private String mobileNumber;
 	private String EmailId;
 	private String Address;
+	private String Remark;
 	private LocalDateTime create_at;
 	
 	@PrePersist
