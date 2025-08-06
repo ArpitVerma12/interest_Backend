@@ -77,55 +77,55 @@ public class overDueController {
 		return ResponseEntity.ok().body(dtoList);
 	}
 	
-	@GetMapping("/fetchCustomerByAddress")
-	public ResponseEntity<?> fetchData(@RequestParam("Address") String Address){
-		List<NewCustomer> customers=Repo.newCustRepo.findByAddress(Address);
-		 List<OverDureRequests> dtoList = customers.stream()
-			        .map(item -> {
-			            OverDureRequests dto = new OverDureRequests();
-			            LocalDateTime createdAtDateTime = item.getCreate_at();
-			            String durationStr = "N/A";
-			            long monthForRent = 1; // default
-			            
-			            if (createdAtDateTime != null) {
-			            	LocalDate createdDate = createdAtDateTime.toLocalDate();
-			                LocalDate today = LocalDate.now();
-
-			                long totalDays = ChronoUnit.DAYS.between(createdDate, today);
-
-			                if (totalDays < 30) {
-			                    // Less than 30 days, still count as 1 month
-			                    durationStr = totalDays + " days (charged as 1 month)";
-			                    monthForRent = 1;
-			                } else {
-			                    Period period = Period.between(createdDate, today);
-			                    long years = period.getYears();
-			                    long months = period.getMonths();
-			                    long days = period.getDays();
-
-			                    durationStr = years + " years, " + months + " months, " + days + " days";
-			                    monthForRent = (years * 12) + months + (days >= 30 ? 1 : 0); // add extra month if days ≥ 30
-			                }
-			            }
-			            
-			            	
-			            
-			            double rentMoney=(Double.parseDouble(item.get) * item.getInterest())/100;
-			            double totalMoney = Double.parseDouble(item.getGiveMoney()) + rentMoney;
-			            
-			            dto.setItemName(item.getItem_name());
-			            dto.setInterest(item.getInterest());
-			            dto.setGiveMoney(item.getGiveMoney());
-			            dto.setMonths(String.valueOf(durationStr));
-			            dto.setRentMoney(String.valueOf(rentMoney)); 
-			            dto.setTotalMoney(String.valueOf(totalMoney)); 
-			            dto.setAddress(Address);
-			            dto.setEmailId(item.getEmailId());
-			            dto.setMobileNumber(item.getMobileNumber());
-			            dto.setName(item.getName());
-			            return dto;
-			        }).toList();
-		 
-		 return ResponseEntity.ok(dtoList); 
-	}
+//	@GetMapping("/fetchCustomerByAddress")
+//	public ResponseEntity<?> fetchData(@RequestParam("Address") String Address){
+//		List<NewCustomer> customers=Repo.newCustRepo.findByAddress(Address);
+//		 List<OverDureRequests> dtoList = customers.stream()
+//			        .map(item -> {
+//			            OverDureRequests dto = new OverDureRequests();
+//			            LocalDateTime createdAtDateTime = item.getCreate_at();
+//			            String durationStr = "N/A";
+//			            long monthForRent = 1; // default
+//			            
+//			            if (createdAtDateTime != null) {
+//			            	LocalDate createdDate = createdAtDateTime.toLocalDate();
+//			                LocalDate today = LocalDate.now();
+//
+//			                long totalDays = ChronoUnit.DAYS.between(createdDate, today);
+//
+//			                if (totalDays < 30) {
+//			                    // Less than 30 days, still count as 1 month
+//			                    durationStr = totalDays + " days (charged as 1 month)";
+//			                    monthForRent = 1;
+//			                } else {
+//			                    Period period = Period.between(createdDate, today);
+//			                    long years = period.getYears();
+//			                    long months = period.getMonths();
+//			                    long days = period.getDays();
+//
+//			                    durationStr = years + " years, " + months + " months, " + days + " days";
+//			                    monthForRent = (years * 12) + months + (days >= 30 ? 1 : 0); // add extra month if days ≥ 30
+//			                }
+//			            }
+//			            
+//			            	
+//			            
+//			            double rentMoney=(Double.parseDouble(item.get) * item.getInterest())/100;
+//			            double totalMoney = Double.parseDouble(item.getGiveMoney()) + rentMoney;
+//			            
+//			            dto.setItemName(item.getItem_name());
+//			            dto.setInterest(item.getInterest());
+//			            dto.setGiveMoney(item.getGiveMoney());
+//			            dto.setMonths(String.valueOf(durationStr));
+//			            dto.setRentMoney(String.valueOf(rentMoney)); 
+//			            dto.setTotalMoney(String.valueOf(totalMoney)); 
+//			            dto.setAddress(Address);
+//			            dto.setEmailId(item.getEmailId());
+//			            dto.setMobileNumber(item.getMobileNumber());
+//			            dto.setName(item.getName());
+//			            return dto;
+//			        }).toList();
+//		 
+//		 return ResponseEntity.ok(dtoList); 
+//	}
 }
