@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.backend.RepositoryHolder.RepositoryBundle;
-import com.backend.entity.NewCustomer;
 import com.backend.entity.NewCustomerItems;
 import com.backend.security.OverDureRequests;
 
@@ -70,7 +69,9 @@ public class overDueController {
 			            dto.setMonths(String.valueOf(durationStr));
 			            dto.setRentMoney(String.valueOf(rentMoney)); 
 			            dto.setTotalMoney(String.valueOf(totalMoney)); 
-
+			            dto.setAddress(item.getNewCustomer().getAddress());
+			            dto.setName(item.getNewCustomer().getName());
+			            dto.setEmailId(item.getNewCustomer().getEmailId());
 			            return dto;
 			        })
 			        .toList();
