@@ -1,7 +1,13 @@
 package com.backend.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,7 +35,9 @@ public class NewCustomerItems {
 	private String remainingMoney;
 	private String status;
 	private LocalDateTime create_at;
-	
+	private String remark;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate customDate;
 	@PrePersist
 	protected void createDate() {
 	    this.create_at = LocalDateTime.now();  
@@ -38,7 +46,7 @@ public class NewCustomerItems {
 	@JoinColumn(name="new_customer_id", referencedColumnName = "user_id")
 	private NewCustomer newCustomer;
 	
-
+	  @JsonIgnore
     @OneToMany(mappedBy = "newCustomerItems", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewCustomerWeight> newCustomerWeight;
 }

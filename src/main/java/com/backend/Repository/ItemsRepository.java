@@ -11,7 +11,7 @@ import com.backend.entity.NewCustomerItems;
 
 public interface ItemsRepository extends JpaRepository<NewCustomerItems, Long>{
 
-	@Query(value = "SELECT i.*, n.* FROM new_customer_items i INNER JOIN new_customer n ON  n.user_id=i.new_customer_id WHERE i.new_customer_id = :customerId", nativeQuery = true)
+	@Query(value = "SELECT i.* FROM new_customer_items i INNER JOIN new_customer n ON  n.user_id=i.new_customer_id WHERE i.new_customer_id = :customerId", nativeQuery = true)
 	List<NewCustomerItems> findByCustomer(@Param("customerId") String customerId);
 
 

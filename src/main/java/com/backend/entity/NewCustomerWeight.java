@@ -1,5 +1,8 @@
 package com.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +20,7 @@ public class NewCustomerWeight {
 	private Double weight;
 	private String unit;
 	
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name="item_id", referencedColumnName = "id")
 	private NewCustomerItems newCustomerItems;
