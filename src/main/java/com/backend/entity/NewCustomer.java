@@ -27,6 +27,7 @@ public class NewCustomer {
 	private String EmailId;
 	private String Address;
 	private String Remark;
+	private String village;
 	private LocalDateTime create_at;
 	
 	@PrePersist

@@ -18,6 +18,7 @@ public class OverDureRequests {
 	 private String mobileNumber;
 	 private String EmailId;
 	 private String Address;
+	 private String village;
 	 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	 private LocalDate date;
 	 private String Remark;

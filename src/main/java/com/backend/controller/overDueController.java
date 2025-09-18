@@ -93,6 +93,7 @@ public class overDueController {
 			            dto.setEmailId(item.getNewCustomer().getEmailId());
 			            dto.setDate(customDate!=null? customDate : createdDate);
 			            dto.setRemark(item.getRemark());
+			            dto.setVillage(item.getNewCustomer().getVillage());
 			            return dto;
 			        })
 			        .toList();

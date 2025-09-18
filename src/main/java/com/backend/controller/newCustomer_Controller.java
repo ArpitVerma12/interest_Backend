@@ -48,7 +48,7 @@ public class newCustomer_Controller {
 	        customerData.put("MobileNumber", customer.getMobileNumber());
 	        customerData.put("EmailId", customer.getEmailId());
 	        customerData.put("create_at", customer.getCreate_at());
-
+	        customerData.put("Village", customer.getVillage());
 	        // If needed, add more fields here
 
 	        resultList.add(customerData);
