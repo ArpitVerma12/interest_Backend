@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,9 @@ public class newCustomer_Controller {
 
 	@Autowired
 	private NewCustomerRepository newCustRepo;
+	
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 	
 	@PostMapping("/addNewCustomer")
 	public ResponseEntity<?> addCustomer(@RequestBody NewCustomer newCust){
@@ -59,5 +63,10 @@ public class newCustomer_Controller {
 
 	    return ResponseEntity.ok(response); // <-- Fixed line
 	}
-
+	
+    @GetMapping("/getVillages")
+    public List<Map<String, Object>> getAllVillages() {
+        String sql = "SELECT id, name FROM villages ORDER BY name ASC";
+        return jdbcTemplate.queryForList(sql);
+    }
 }
