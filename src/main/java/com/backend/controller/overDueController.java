@@ -103,7 +103,7 @@ public class overDueController {
 			            }
 			            return null;
 			        })
-			        
+			        .filter(Objects::nonNull)
 			        .toList();
 		 if (dtoList.isEmpty()) {
 		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Data not found");
