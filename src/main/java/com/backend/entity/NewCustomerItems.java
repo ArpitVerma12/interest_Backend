@@ -46,7 +46,8 @@ public class NewCustomerItems {
 	@JoinColumn(name="new_customer_id", referencedColumnName = "user_id")
 	private NewCustomer newCustomer;
 	
-	  @JsonIgnore
+//	  @JsonIgnore
+	@JsonManagedReference
     @OneToMany(mappedBy = "newCustomerItems", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewCustomerWeight> newCustomerWeight;
 }

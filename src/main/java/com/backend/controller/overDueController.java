@@ -27,7 +27,7 @@ public class overDueController {
 
 
 	
-	///check this API//////////////////////
+	
 	@GetMapping("/fetchItems")
 	public ResponseEntity<?> fetchNewCustomer(@RequestParam("customerId") String customerId)
 	{
@@ -38,7 +38,7 @@ public class overDueController {
 			            OverDureRequests dto = new OverDureRequests();
 			            LocalDateTime createdAtDateTime = item.getCreate_at();
 			            String durationStr = "N/A";
-			            long monthForRent = 1; // default
+			            double monthForRent;
 			            LocalDate createdDate = null;
 			            LocalDate customDate = null;
 			            if (createdAtDateTime != null) {
@@ -67,23 +67,34 @@ public class overDueController {
 		                     months = period.getMonths();
 		                     days = period.getDays();
 		                     
-			                if (totalDays < 30) {
-			                    // Less than 30 days, still count as 1 month
-			                    durationStr = totalDays + " days (charged as 1 month)";
-			                    monthForRent = 1;
-			                } else if(days < 30){
-			                   
-			                    System.out.println("MONTH:"+months);
-			                    durationStr = years + " years, " + months + " months, " + days + " days";
-			                    monthForRent = (years * 12) + months + (days < 30 ? 1 : 0); // add extra month if days ≥ 30
-			               System.out.println("monthForRent:"+monthForRent);
-			                }
+//			                if (totalDays < 30) {
+//			                    // Less than 30 days, still count as 1 month
+//			                    durationStr = totalDays + " days (charged as 1 month)";
+//			                    monthForRent = 1;
+//			                } else if(days < 30){
+//			                   
+//			                    System.out.println("MONTH:"+months);
+//			                    durationStr = years + " years, " + months + " months, " + days + " days";
+//			                    monthForRent = (years * 12) + months + (days < 30 ? 1 : 0); // add extra month if days ≥ 30
+//			               System.out.println("monthForRent:"+monthForRent);
+//			                }
+		                     double rentMoney;
+		                     durationStr = years + " years, " + months + " months, " + days + " days";
+		                     if(item.getGiveMoney()!=null && item.getInterest()!=null) {
+		                     if (totalDays < 30) {
+		                    	 rentMoney=(((Double.parseDouble(item.getGiveMoney()) * item.getInterest())/100)/30)*totalDays;
+		                     }
+		                     
+		                     else {
+			                    
+			                    monthForRent = (years * 12) + months + (days/30.0); 
+			                    rentMoney=((Double.parseDouble(item.getGiveMoney()) * item.getInterest())/100)*monthForRent;
 			            }
 			            
+			            
+			            
+			            
 			            	
-			            if(item.getGiveMoney()!=null && item.getInterest()!=null) {
-			            	
-			            double rentMoney=((Double.parseDouble(item.getGiveMoney()) * item.getInterest())/100)*monthForRent;
 			            double totalMoney = Double.parseDouble(item.getGiveMoney()) + rentMoney;
 			          
 			            dto.setItemName(item.getItem_name());
@@ -98,8 +109,10 @@ public class overDueController {
 			            dto.setDate(customDate!=null? customDate : createdDate);
 			            dto.setRemark(item.getRemark());
 			            dto.setVillage(item.getNewCustomer().getVillage());
+			            dto.setMobileNumber(item.getNewCustomer().getMobileNumber());
 			            return dto;
 			            
+			            }
 			            }
 			            return null;
 			        })

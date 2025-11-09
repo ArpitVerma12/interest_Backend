@@ -48,7 +48,12 @@ public class newCustomer_Controller {
 	    for (NewCustomer customer : customers) {
 	        Map<String, Object> customerData = new HashMap<>();
 	        customerData.put("user_id", customer.getUser_id());
+	        if(customer.getRemark()!=null) {
 	        customerData.put("Name", (customer.getName() + "(" + customer.getRemark() + ")"));
+	        }
+	        else {
+	        	customerData.put("Name", customer.getName());
+	        }
 	        customerData.put("MobileNumber", customer.getMobileNumber());
 	        customerData.put("EmailId", customer.getEmailId());
 	        customerData.put("create_at", customer.getCreate_at());
