@@ -1,6 +1,7 @@
 package com.backend.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,5 +21,5 @@ public class DepositeMoney {
 	private LocalDateTime createDate;
 	
 	@OneToMany
-	private NewCustomerItems newCustomeritems;
+	private List<NewCustomerItems> newCustomeritems;
 }
