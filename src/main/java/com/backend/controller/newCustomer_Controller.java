@@ -71,7 +71,7 @@ public class newCustomer_Controller {
 	
     @GetMapping("/getVillages")
     public List<Map<String, Object>> getAllVillages() {
-        String sql = "SELECT id, name FROM villages ORDER BY name ASC";
+        String sql = "SELECT id, village_name FROM villages ORDER BY village_name ASC;";
         return jdbcTemplate.queryForList(sql);
     }
 }
