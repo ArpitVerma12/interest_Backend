@@ -50,7 +50,7 @@ public class newCustomer_Controller {
 	    for (NewCustomer customer : customers) {
 	        Map<String, Object> customerData = new HashMap<>();
 	        customerData.put("user_id", customer.getUser_id());
-	        if(customer.getRemark()!=null) {
+	        if(customer.getRemark()!=null && !customer.getRemark().isEmpty()) {
 	        customerData.put("Name", (customer.getName() + "(" + customer.getRemark() + ")"));
 	        }
 	        else {
