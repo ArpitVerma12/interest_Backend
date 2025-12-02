@@ -3,6 +3,8 @@ package com.backend.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +33,7 @@ public class NewCustomer {
 	private LocalDateTime create_at;
 	
 	@PrePersist
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	protected void createDate() {
 	    this.create_at = LocalDateTime.now();  
 	}

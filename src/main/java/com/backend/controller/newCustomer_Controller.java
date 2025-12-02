@@ -33,9 +33,11 @@ public class newCustomer_Controller {
 		if (existId != null) {
 			user_id = newCust.generateTemplateIdWithUUID();
 		}
-		NewCustomer existEmail=newCustRepo.findByEmailId(email);
-		if(existEmail!=null) {
+		if(email!=null && !email.isEmpty()) {
+		String existEmail=newCustRepo.findByEmailId(email);
+		if(existEmail!=null && !existEmail.isEmpty()) {
 			return ResponseEntity.badRequest().body("email already exist");		
+		}
 		}
 		return ResponseEntity.ok().body(newCustRepo.save(newCust));
 	}

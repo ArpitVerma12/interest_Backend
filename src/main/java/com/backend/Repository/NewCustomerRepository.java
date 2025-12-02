@@ -14,7 +14,7 @@ public interface NewCustomerRepository extends JpaRepository<NewCustomer, Long>{
 	String findByUserId(@Param("user_id") String user_id);
 
 	@Query(value="select * FROM new_customer where email_id=:email", nativeQuery=true)
-	NewCustomer findByEmailId(@Param("email") String email);
+	String findByEmailId(@Param("email") String email);
 
 	@Query(value="select * FROM new_customer where user_id=:user_id", nativeQuery=true)
 	NewCustomer findByUserId1(@Param("user_id") String user_id);
