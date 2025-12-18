@@ -36,7 +36,7 @@ public class NewCustomerItems {
 	private String status;
 	private LocalDateTime create_at;
 	private String remark;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDate customDate;
 	@PrePersist
 	protected void createDate() {
