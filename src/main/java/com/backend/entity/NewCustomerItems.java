@@ -1,12 +1,10 @@
 package com.backend.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -31,13 +29,15 @@ public class NewCustomerItems {
 	@Column(name = "interest")
 	private Double interest;
 	private String giveMoney;
-	private String takeMoney;
-	private String remainingMoney;
-	private String status;
+	private String rentMoney;
+	private BigDecimal remainingMoney;
+	private String status="pending";
 	private LocalDateTime create_at;
 	private String remark;
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDate customDate;
+	private String Time;
+	private BigDecimal totalMoney;
 	@PrePersist
 	protected void createDate() {
 	    this.create_at = LocalDateTime.now();  
@@ -50,4 +50,7 @@ public class NewCustomerItems {
 	@JsonManagedReference
     @OneToMany(mappedBy = "newCustomerItems", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewCustomerWeight> newCustomerWeight;
+	
+	@OneToMany(mappedBy = "newCustomeritems")
+	private List<DepositeMoney> depositeMoneyList;
 }

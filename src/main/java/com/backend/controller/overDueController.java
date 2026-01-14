@@ -1,19 +1,24 @@
 package com.backend.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.backend.DTOs.depositeMoney;
 import com.backend.RepositoryHolder.RepositoryBundle;
+import com.backend.entity.DepositeMoney;
 import com.backend.entity.NewCustomerItems;
 import com.backend.security.OverDureRequests;
 
@@ -23,11 +28,7 @@ public class overDueController {
 	@Autowired
 	private RepositoryBundle Repo;
 	
-	
 
-
-	
-	
 	@GetMapping("/fetchItems")
 	public ResponseEntity<?> fetchNewCustomer(@RequestParam("customerId") String customerId)
 	{
@@ -92,11 +93,15 @@ public class overDueController {
 			            }
 			            
 			            
-			            
-			            
+		                     NewCustomerItems exists=Repo.itemsRepo.findById(item.getId()).orElse(item);
+		                     //NewCustomerItems itemss=new NewCustomerItems();
+		                     exists.setTime(durationStr);
 			            	
 			            double totalMoney = Double.parseDouble(item.getGiveMoney()) + rentMoney;
-			          
+			            exists.setTotalMoney(BigDecimal.valueOf(totalMoney));
+			            exists.setRentMoney(String.valueOf(rentMoney));
+			            Repo.itemsRepo.save(exists);
+			            
 			            dto.setItemName(item.getItem_name());
 			            dto.setInterest(item.getInterest());
 			            dto.setGiveMoney(item.getGiveMoney());
@@ -123,6 +128,55 @@ public class overDueController {
 		    }
 		return ResponseEntity.ok().body(dtoList);
 	}
+	
+	
+	@PostMapping("/depositeMoney")
+	public ResponseEntity<?> depositMoney(@RequestBody depositeMoney deposite){
+		
+		NewCustomerItems item = Repo.itemsRepo.findById(deposite.getId()).orElse(null);
+		if(item==null) {
+			return ResponseEntity.badRequest().body("not found");
+		}
+		BigDecimal totalDeposit =Repo.depositeRepo.getTotalDepositByCustomerId(deposite.getId());
+		BigDecimal total=totalDeposit.add(deposite.getDepositeMoney());
+		if (total.compareTo(item.getTotalMoney()) > 0) {
+			return ResponseEntity.badRequest().body("deposit money can't be greater than total money");
+		}
+		DepositeMoney deposites=new DepositeMoney();
+		if (deposite.getDepositeMoney() == null) {
+	        return ResponseEntity.badRequest().body("Deposit amount is required");
+	    }
+
+	    if (deposite.getTotalMoney() == null) {
+	        return ResponseEntity.badRequest().body("Total money is not set");
+	    }
+	    
+	    
+	    System.out.println(totalDeposit);
+		BigDecimal remainingMoney=deposite.getTotalMoney().subtract(total);
+		BigDecimal totals = (totalDeposit.add(deposite.getDepositeMoney())).setScale(0, RoundingMode.DOWN);
+		BigDecimal expected = deposite.getTotalMoney().setScale(0, RoundingMode.DOWN);
+		System.out.println(totals);
+		System.out.println(expected);
+		if (totals.compareTo(expected) == 0) {
+		    item.setStatus("completed");
+		}
+
+		item.setRemark(deposite.getRemark());
+		item.setRemainingMoney(remainingMoney);
+	
+		deposites.setNewCustomeritems(item);
+		deposites.setDepositeMoney(deposite.getDepositeMoney());
+		deposites.setCreateDate(LocalDateTime.now());
+		//deposites.setNewCustomeritems();
+		Repo.itemsRepo.save(item);
+		Repo.depositeRepo.save(deposites);
+		return ResponseEntity.ok().body("successfully");
+		
+	}
+	
+	
+	
 	
 //	@GetMapping("/fetchCustomerByAddress")
 //	public ResponseEntity<?> fetchData(@RequestParam("Address") String Address){
