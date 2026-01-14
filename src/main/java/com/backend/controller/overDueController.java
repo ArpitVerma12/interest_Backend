@@ -102,6 +102,7 @@ public class overDueController {
 			            exists.setRentMoney(String.valueOf(rentMoney));
 			            Repo.itemsRepo.save(exists);
 			            
+			            dto.setId(item.getId());
 			            dto.setItemName(item.getItem_name());
 			            dto.setInterest(item.getInterest());
 			            dto.setGiveMoney(item.getGiveMoney());

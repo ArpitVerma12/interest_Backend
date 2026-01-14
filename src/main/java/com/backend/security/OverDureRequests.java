@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class OverDureRequests {
+	 private Long id;
 	 private String itemName;
 	 private Double interest;
 	 private String giveMoney;
