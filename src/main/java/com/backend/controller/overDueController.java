@@ -116,6 +116,12 @@ public class overDueController {
 			            dto.setRemark(item.getRemark());
 			            dto.setVillage(item.getNewCustomer().getVillage());
 			            dto.setMobileNumber(item.getNewCustomer().getMobileNumber());
+			            if(item.getRemainingMoney()==null) {
+			            	dto.setRemaningAmount(item.getTotalMoney());
+			            }
+			            else {
+			            dto.setRemaningAmount(item.getRemainingMoney());
+			            }
 			            return dto;
 			            
 			            }
