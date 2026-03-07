@@ -27,9 +27,9 @@ public class NewCustomerItems {
 	private Long id;
 	private String item_name;
 	@Column(name = "interest")
-	private Double interest;
-	private String giveMoney;
-	private String rentMoney;
+	private BigDecimal interest;
+	private BigDecimal giveMoney;
+	private BigDecimal rentMoney;
 	private BigDecimal remainingMoney;
 	private String status="pending";
 	private LocalDateTime create_at;
@@ -38,6 +38,7 @@ public class NewCustomerItems {
 	private LocalDate customDate;
 	private String Time;
 	private BigDecimal totalMoney;
+	private BigDecimal totalRemainingMoney;
 	@PrePersist
 	protected void createDate() {
 	    this.create_at = LocalDateTime.now();  

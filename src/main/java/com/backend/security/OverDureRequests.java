@@ -11,11 +11,11 @@ import lombok.Data;
 public class OverDureRequests {
 	 private Long id;
 	 private String itemName;
-	 private Double interest;
-	 private String giveMoney;
+	 private BigDecimal interest;
+	 private BigDecimal giveMoney;
 	 private String months;
-	 private String RentMoney;
-	 private String TotalMoney;
+	 private BigDecimal RentMoney;
+	 private BigDecimal TotalMoney;
 	 private String Name;
 	 private String mobileNumber;
 	 private String EmailId;
@@ -25,4 +25,5 @@ public class OverDureRequests {
 	 private LocalDate date;
 	 private String Remark;
 	 private BigDecimal remaningAmount;
+	 private BigDecimal totalremaningAmount;
 }

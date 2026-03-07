@@ -15,4 +15,7 @@ public interface DepositeRepository extends JpaRepository<DepositeMoney, Long>{
 	           "FROM DepositeMoney d " +
 	           "WHERE d.newCustomeritems.id = :customerId")
 	    BigDecimal getTotalDepositByCustomerId(@Param("customerId") Long customerId);
+
+	   @Query(value="SELECT * FROM deposite_money where customer_item_id=:id  ORDER BY create_date DESC LIMIT 1",nativeQuery = true)
+	DepositeMoney findByCreateDate(@Param("id") Long id);
 }

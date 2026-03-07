@@ -42,10 +42,18 @@ public class overDueController {
 			            double monthForRent;
 			            LocalDate createdDate = null;
 			            LocalDate customDate = null;
-			            if (createdAtDateTime != null) {
+			            
+			            
+			            if (createdAtDateTime != null ) {
 			            	createdDate = createdAtDateTime.toLocalDate();
 			                LocalDate today = LocalDate.now();
 			                customDate = item.getCustomDate();
+			                
+			            	if(item.getRemainingMoney()!=null) {
+			            		DepositeMoney depositeDate=Repo.depositeRepo.findByCreateDate(item.getId());
+			            		customDate = depositeDate.getCreateDate().toLocalDate();
+			            	}
+			            
 			                long totalDays;
 			                long years;
 			                long months;
@@ -79,17 +87,18 @@ public class overDueController {
 //			                    monthForRent = (years * 12) + months + (days < 30 ? 1 : 0); // add extra month if days ≥ 30
 //			               System.out.println("monthForRent:"+monthForRent);
 //			                }
-		                     double rentMoney;
+		                     BigDecimal rentMoney = null;
 		                     durationStr = years + " years, " + months + " months, " + days + " days";
 		                     if(item.getGiveMoney()!=null && item.getInterest()!=null) {
 		                     if (totalDays < 30) {
-		                    	 rentMoney=(((Double.parseDouble(item.getGiveMoney()) * item.getInterest())/100)/30)*totalDays;
+//		                    	 rentMoney=(((Double.parseDouble(item.getGiveMoney()) * item.getInterest())/100)/30)*totalDays;
+		                    	 rentMoney=(((((item.getGiveMoney()).multiply( item.getInterest())).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)).divide(BigDecimal.valueOf(30), 2, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(totalDays)));
 		                     }
 		                     
 		                     else {
 			                    
 			                    monthForRent = (years * 12) + months + (days/30.0); 
-			                    rentMoney=((Double.parseDouble(item.getGiveMoney()) * item.getInterest())/100)*monthForRent;
+			                    rentMoney=((item.getGiveMoney().multiply(item.getInterest())).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(monthForRent));
 			            }
 			            
 			            
@@ -97,9 +106,9 @@ public class overDueController {
 		                     //NewCustomerItems itemss=new NewCustomerItems();
 		                     exists.setTime(durationStr);
 			            	
-			            double totalMoney = Double.parseDouble(item.getGiveMoney()) + rentMoney;
-			            exists.setTotalMoney(BigDecimal.valueOf(totalMoney));
-			            exists.setRentMoney(String.valueOf(rentMoney));
+			            BigDecimal totalMoney = item.getGiveMoney().add(rentMoney);
+			            exists.setTotalMoney(totalMoney);
+			            exists.setRentMoney(rentMoney);
 			            Repo.itemsRepo.save(exists);
 			            
 			            dto.setId(item.getId());
@@ -107,8 +116,8 @@ public class overDueController {
 			            dto.setInterest(item.getInterest());
 			            dto.setGiveMoney(item.getGiveMoney());
 			            dto.setMonths(String.valueOf(durationStr));
-			            dto.setRentMoney(String.valueOf(rentMoney)); 
-			            dto.setTotalMoney(String.valueOf(totalMoney)); 
+			            dto.setRentMoney(rentMoney); 
+			            dto.setTotalMoney(totalMoney); 
 			            dto.setAddress(item.getNewCustomer().getAddress());
 			            dto.setName(item.getNewCustomer().getName());
 			            dto.setEmailId(item.getNewCustomer().getEmailId());
@@ -116,16 +125,21 @@ public class overDueController {
 			            dto.setRemark(item.getRemark());
 			            dto.setVillage(item.getNewCustomer().getVillage());
 			            dto.setMobileNumber(item.getNewCustomer().getMobileNumber());
+			            System.out.println("AAA"+item.getRemainingMoney());
 			            if(item.getRemainingMoney()==null) {
+			            	System.out.println("NULL");
 			            	dto.setRemaningAmount(item.getTotalMoney());
 			            }
 			            else {
+			            	System.out.println("NOT");
 			            dto.setRemaningAmount(item.getRemainingMoney());
+			            dto.setTotalMoney(item.getRemainingMoney().add(rentMoney));
+			            dto.setTotalremaningAmount(item.getRemainingMoney().add(rentMoney));
 			            }
 			            return dto;
 			            
 			            }
-			            }
+			            } 
 			            return null;
 			        })
 			        .filter(Objects::nonNull)
@@ -159,12 +173,12 @@ public class overDueController {
 	    }
 	    
 	    
-	    System.out.println(totalDeposit);
+	    System.out.println("TOTALD"+totalDeposit);
 		BigDecimal remainingMoney=deposite.getTotalMoney().subtract(total);
 		BigDecimal totals = (totalDeposit.add(deposite.getDepositeMoney())).setScale(0, RoundingMode.DOWN);
 		BigDecimal expected = deposite.getTotalMoney().setScale(0, RoundingMode.DOWN);
-		System.out.println(totals);
-		System.out.println(expected);
+		System.out.println("TOTAL"+totals);
+		System.out.println("EXPECTED"+expected);
 		if (totals.compareTo(expected) == 0) {
 		    item.setStatus("completed");
 		}
