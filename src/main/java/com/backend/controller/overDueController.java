@@ -105,10 +105,18 @@ public class overDueController {
 		                     NewCustomerItems exists=Repo.itemsRepo.findById(item.getId()).orElse(item);
 		                     //NewCustomerItems itemss=new NewCustomerItems();
 		                     exists.setTime(durationStr);
-			            	
-			            BigDecimal totalMoney = item.getGiveMoney().add(rentMoney);
+		                     BigDecimal totalMoney=null;
+		              if(item.getRemainingMoney()==null) {
+			            totalMoney = item.getGiveMoney().add(rentMoney);
 			            exists.setTotalMoney(totalMoney);
-			            exists.setRentMoney(rentMoney);
+			        	
+		               }
+		              else {
+		            	  totalMoney=item.getRemainingMoney().add(rentMoney);
+		            	  exists.setTotalMoney(totalMoney);
+		              }
+		              
+		              	exists.setRentMoney(rentMoney);
 			            Repo.itemsRepo.save(exists);
 			            
 			            dto.setId(item.getId());
@@ -159,8 +167,9 @@ public class overDueController {
 			return ResponseEntity.badRequest().body("not found");
 		}
 		BigDecimal totalDeposit =Repo.depositeRepo.getTotalDepositByCustomerId(deposite.getId());
-		BigDecimal total=totalDeposit.add(deposite.getDepositeMoney());
-		if (total.compareTo(item.getTotalMoney()) > 0) {
+		//BigDecimal totalDeposit =Repo.depositeRepo.getTotalDepositByCustomerId(deposite.getId());
+		//BigDecimal total=totalDeposit.add(deposite.getDepositeMoney());
+		if (deposite.getDepositeMoney().compareTo(item.getTotalMoney()) > 0) {
 			return ResponseEntity.badRequest().body("deposit money can't be greater than total money");
 		}
 		DepositeMoney deposites=new DepositeMoney();
@@ -174,18 +183,18 @@ public class overDueController {
 	    
 	    
 	    System.out.println("TOTALD"+totalDeposit);
-		BigDecimal remainingMoney=deposite.getTotalMoney().subtract(total);
-		BigDecimal totals = (totalDeposit.add(deposite.getDepositeMoney())).setScale(0, RoundingMode.DOWN);
-		BigDecimal expected = deposite.getTotalMoney().setScale(0, RoundingMode.DOWN);
-		System.out.println("TOTAL"+totals);
+		BigDecimal remainingMoney=deposite.getTotalMoney().subtract(deposite.getDepositeMoney());
+		//BigDecimal totals = (totalDeposit.add(deposite.getDepositeMoney())).setScale(0, RoundingMode.DOWN);
+		BigDecimal expected = remainingMoney.setScale(0, RoundingMode.DOWN);
+		//System.out.println("TOTAL"+totals);
 		System.out.println("EXPECTED"+expected);
-		if (totals.compareTo(expected) == 0) {
+		if (expected.intValue()==0) {
 		    item.setStatus("completed");
 		}
 
 		item.setRemark(deposite.getRemark());
 		item.setRemainingMoney(remainingMoney);
-	
+		item.setTotalMoney(remainingMoney);
 		deposites.setNewCustomeritems(item);
 		deposites.setDepositeMoney(deposite.getDepositeMoney());
 		deposites.setCreateDate(LocalDateTime.now());
@@ -195,59 +204,4 @@ public class overDueController {
 		return ResponseEntity.ok().body("successfully");
 		
 	}
-	
-	
-	
-	
-//	@GetMapping("/fetchCustomerByAddress")
-//	public ResponseEntity<?> fetchData(@RequestParam("Address") String Address){
-//		List<NewCustomer> customers=Repo.newCustRepo.findByAddress(Address);
-//		 List<OverDureRequests> dtoList = customers.stream()
-//			        .map(item -> {
-//			            OverDureRequests dto = new OverDureRequests();
-//			            LocalDateTime createdAtDateTime = item.getCreate_at();
-//			            String durationStr = "N/A";
-//			            long monthForRent = 1; // default
-//			            
-//			            if (createdAtDateTime != null) {
-//			            	LocalDate createdDate = createdAtDateTime.toLocalDate();
-//			                LocalDate today = LocalDate.now();
-//
-//			                long totalDays = ChronoUnit.DAYS.between(createdDate, today);
-//
-//			                if (totalDays < 30) {
-//			                    // Less than 30 days, still count as 1 month
-//			                    durationStr = totalDays + " days (charged as 1 month)";
-//			                    monthForRent = 1;
-//			                } else {
-//			                    Period period = Period.between(createdDate, today);
-//			                    long years = period.getYears();
-//			                    long months = period.getMonths();
-//			                    long days = period.getDays();
-//
-//			                    durationStr = years + " years, " + months + " months, " + days + " days";
-//			                    monthForRent = (years * 12) + months + (days >= 30 ? 1 : 0); // add extra month if days ≥ 30
-//			                }
-//			            }
-//			            
-//			            	
-//			            
-//			            double rentMoney=(Double.parseDouble(item.get) * item.getInterest())/100;
-//			            double totalMoney = Double.parseDouble(item.getGiveMoney()) + rentMoney;
-//			            
-//			            dto.setItemName(item.getItem_name());
-//			            dto.setInterest(item.getInterest());
-//			            dto.setGiveMoney(item.getGiveMoney());
-//			            dto.setMonths(String.valueOf(durationStr));
-//			            dto.setRentMoney(String.valueOf(rentMoney)); 
-//			            dto.setTotalMoney(String.valueOf(totalMoney)); 
-//			            dto.setAddress(Address);
-//			            dto.setEmailId(item.getEmailId());
-//			            dto.setMobileNumber(item.getMobileNumber());
-//			            dto.setName(item.getName());
-//			            return dto;
-//			        }).toList();
-//		 
-//		 return ResponseEntity.ok(dtoList); 
-//	}
 }
