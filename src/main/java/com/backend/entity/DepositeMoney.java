@@ -21,7 +21,7 @@ public class DepositeMoney {
 	private Long id;
 	private BigDecimal DepositeMoney;
 	private LocalDateTime createDate;
-	
+	private String Remark;
 	@ManyToOne
 	@JoinColumn(name = "customer_item_id") 
 	private NewCustomerItems newCustomeritems;

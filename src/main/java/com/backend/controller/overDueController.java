@@ -195,6 +195,8 @@ public class overDueController {
 		item.setRemark(deposite.getRemark());
 		item.setRemainingMoney(remainingMoney);
 		item.setTotalMoney(remainingMoney);
+		
+		deposites.setRemark(deposite.getRemark());
 		deposites.setNewCustomeritems(item);
 		deposites.setDepositeMoney(deposite.getDepositeMoney());
 		deposites.setCreateDate(LocalDateTime.now());
