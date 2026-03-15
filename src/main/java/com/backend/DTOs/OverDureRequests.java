@@ -1,4 +1,4 @@
-package com.backend.security;
+package com.backend.DTOs;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

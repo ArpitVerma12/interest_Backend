@@ -1,29 +1,28 @@
 package com.backend.controller;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.backend.Repository.*;
+import com.backend.RepositoryHolder.RepositoryBundle;
 import com.backend.entity.*;
 
 @RestController
 @RequestMapping("/auth")
 public class SignupLogin {
-
-	@Autowired
-	private SignupLoginRepository signupLoginRepo;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	
+  @Autowired
+	private RepositoryBundle Repo;
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody signup signup) {
 		String user_id = signup.generateTemplateIdWithUUID();
 		String email = signup.getEmailId();
-		String existId = signupLoginRepo.findByUserId(user_id);
+		String existId = Repo.signupLoginRepo.findByUserId(user_id);
 		signup existEmail = null;
-		existEmail = signupLoginRepo.findByEmailId(email);
+		existEmail = Repo.signupLoginRepo.findByEmailId(email);
 		if (existId != null) {
 			user_id = signup.generateTemplateIdWithUUID();
 		}
@@ -35,10 +34,10 @@ public class SignupLogin {
 			return ResponseEntity.badRequest().body("Invalid mobile number. It must be 10 digits.");
 		}
 
-		String hashedPassword = passwordEncoder.encode(signup.getPassword());
+		String hashedPassword = Repo.passwordEncoder.encode(signup.getPassword());
 		signup.setPassword(hashedPassword);
 
-		return ResponseEntity.ok(signupLoginRepo.save(signup));
+		return ResponseEntity.ok(Repo.signupLoginRepo.save(signup));
 	}
 
 	@PostMapping("/login")
@@ -50,9 +49,9 @@ public class SignupLogin {
 		signup user = null;
 
 		if (email != null && !email.isEmpty()) {
-			user = signupLoginRepo.findByEmailId(email);
+			user = Repo.signupLoginRepo.findByEmailId(email);
 		} else if (mobileNumber != null && !mobileNumber.isEmpty()) {
-			user = signupLoginRepo.findByMobileNumber(mobileNumber);
+			user = Repo.signupLoginRepo.findByMobileNumber(mobileNumber);
 		} else {
 			return ResponseEntity.badRequest().body("Email or Mobile Number is required");
 		}
@@ -62,11 +61,24 @@ public class SignupLogin {
 		}
 
 		// Check hashed password
-		if (!passwordEncoder.matches(password, user.getPassword())) {
+		if (!Repo.passwordEncoder.matches(password, user.getPassword())) {
 			return ResponseEntity.badRequest().body("Invalid credentials");
 		}
+		  // Create UserDetails without roles
+		UserDetails userDetails = org.springframework.security.core.userdetails.User
+		        .withUsername(user.getFullName())
+		        .password(user.getPassword())
+		        .authorities("User")
+		        .build();
 
-		return ResponseEntity.ok("Login Successfully");
+	    // Generate token
+	    String token = Repo.jwtUtils.generateTokenFromUsername(userDetails);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("token", token);
+	    response.put("message", "Login Successfully");
+
+		return ResponseEntity.ok(response);
 	}
 
 }

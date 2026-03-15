@@ -13,9 +13,9 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("IMS Backend API")
+                        .title("Interest Backend API")
                         .version("1.0")
-                        .description("API documentation for IMS Backend"));
+                        .description("API documentation for Interest Backend"));
     }
 }
 
