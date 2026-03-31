@@ -2,8 +2,12 @@ package com.backend.controller;
 
 import java.util.*;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+// import org.springframework.security.core.Authentication;
+// import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.backend.RepositoryHolder.RepositoryBundle;
@@ -20,7 +24,7 @@ public class SignupLogin {
 	public ResponseEntity<?> signup(@RequestBody signup signup) {
 		String user_id = signup.generateTemplateIdWithUUID();
 		String email = signup.getEmailId();
-		String existId = Repo.signupLoginRepo.findByUserId(user_id);
+		signup existId = Repo.signupLoginRepo.findByUserId(user_id);
 		signup existEmail = null;
 		existEmail = Repo.signupLoginRepo.findByEmailId(email);
 		if (existId != null) {
@@ -40,45 +44,89 @@ public class SignupLogin {
 		return ResponseEntity.ok(Repo.signupLoginRepo.save(signup));
 	}
 
-	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody signup login) {
-		String email = login.getEmailId();
-		String mobileNumber = login.getMobileNumber();
-		String password = login.getPassword();
+	
+@PostMapping("/login")
+public ResponseEntity<?> login(@RequestBody signup login) {
 
-		signup user = null;
+    String email = login.getEmailId();
+    String mobileNumber = login.getMobileNumber();
+    String password = login.getPassword();
 
-		if (email != null && !email.isEmpty()) {
-			user = Repo.signupLoginRepo.findByEmailId(email);
-		} else if (mobileNumber != null && !mobileNumber.isEmpty()) {
-			user = Repo.signupLoginRepo.findByMobileNumber(mobileNumber);
-		} else {
-			return ResponseEntity.badRequest().body("Email or Mobile Number is required");
-		}
+    signup user = null;
 
-		if (user == null) {
-			return ResponseEntity.badRequest().body("Invalid credentials");
-		}
+    if (email != null && !email.isEmpty()) {
+        user = Repo.signupLoginRepo.findByEmailId(email);
+    } else if (mobileNumber != null && !mobileNumber.isEmpty()) {
+        user = Repo.signupLoginRepo.findByMobileNumber(mobileNumber);
+    } else {
+        return ResponseEntity.badRequest().body("Email or Mobile Number is required");
+    }
 
-		// Check hashed password
-		if (!Repo.passwordEncoder.matches(password, user.getPassword())) {
-			return ResponseEntity.badRequest().body("Invalid credentials");
-		}
-		  // Create UserDetails without roles
-		UserDetails userDetails = org.springframework.security.core.userdetails.User
-		        .withUsername(user.getFullName())
-		        .password(user.getPassword())
-		        .authorities("User")
-		        .build();
+    if (user == null) {
+        return ResponseEntity.badRequest().body("Invalid credentials");
+    }
 
-	    // Generate token
-	    String token = Repo.jwtUtils.generateTokenFromUsername(userDetails);
+    // ✅ Manual password check (your way)
+    if (!Repo.passwordEncoder.matches(password, user.getPassword())) {
+        return ResponseEntity.badRequest().body("Invalid credentials");
+    }
 
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("token", token);
-	    response.put("message", "Login Successfully");
+    // ✅ IMPORTANT: use unique identifier (NOT fullName)
+    UserDetails userDetails = org.springframework.security.core.userdetails.User
+            .withUsername(user.getUser_id())  // 🔥 FIXED
+            .password(user.getPassword())
+            .authorities("user") 
+            .build();
 
-		return ResponseEntity.ok(response);
-	}
+    // ✅ Generate token
+    String token = Repo.jwtUtils.generateTokenFromUsername(userDetails);
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("token", token);
+    response.put("message", "Login Successfully");
+
+    return ResponseEntity.ok(response);
+}
+
+	// @PostMapping("/login")
+	// public ResponseEntity<?> login(@RequestBody signup login) {
+	// 	String email = login.getEmailId();
+	// 	String mobileNumber = login.getMobileNumber();
+	// 	String password = login.getPassword();
+
+	// 	signup user = null;
+
+	// 	if (email != null && !email.isEmpty()) {
+	// 		user = Repo.signupLoginRepo.findByEmailId(email);
+	// 	} else if (mobileNumber != null && !mobileNumber.isEmpty()) {
+	// 		user = Repo.signupLoginRepo.findByMobileNumber(mobileNumber);
+	// 	} else {
+	// 		return ResponseEntity.badRequest().body("Email or Mobile Number is required");
+	// 	}
+
+	// 	if (user == null) {
+	// 		return ResponseEntity.badRequest().body("Invalid credentials");
+	// 	}
+
+	// 	// Check hashed password
+	// 	if (!Repo.passwordEncoder.matches(password, user.getPassword())) {
+	// 		return ResponseEntity.badRequest().body("Invalid credentials");
+	// 	}
+	// 	  // Create UserDetails without roles
+	// 	UserDetails userDetails = org.springframework.security.core.userdetails.User
+	// 	        .withUsername(user.getFullName())
+	// 	        .password(user.getPassword())
+	// 	        .authorities("User")
+	// 	        .build();
+
+	//     // Generate token
+	//     String token = Repo.jwtUtils.generateTokenFromUsername(userDetails);
+
+	//     Map<String, Object> response = new HashMap<>();
+	//     response.put("token", token);
+	//     response.put("message", "Login Successfully");
+
+	// 	return ResponseEntity.ok(response);
+	// }
 
 }

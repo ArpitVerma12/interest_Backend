@@ -11,7 +11,7 @@ import com.backend.entity.signup;
 public interface SignupLoginRepository extends JpaRepository<signup,Long> {
 
 	@Query(value="select * FROM signup where user_id=:user_id", nativeQuery=true)
-	String findByUserId(@Param("user_id") String user_id);
+	signup findByUserId(@Param("user_id") String user_id);
 
 	@Query(value="select * FROM signup where email_id=:email", nativeQuery=true)
 	signup findByEmailId(@Param("email") String email);

@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+// import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import javax.sql.DataSource;
@@ -27,8 +27,8 @@ public class securityConfig {
     @Autowired
     DataSource dataSource;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    // @Autowired
+    // private AuthEntryPointJwt unauthorizedHandler;
 
     
     
@@ -49,6 +49,7 @@ public class securityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
         );
+        http.cors();
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //      http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
@@ -57,10 +58,10 @@ public class securityConfig {
         return http.build();
     }
     
-    @Bean
-    JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
-    }
+    // @Bean
+    // JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
+    //     return new JdbcUserDetailsManager(dataSource);
+    // }
     
 //    @Bean
 //    public CommandLineRunner initData(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
@@ -90,15 +91,24 @@ public class securityConfig {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       PasswordEncoder passwordEncoder,
-                                                       UserDetailsService userDetailsService) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder)
-                .and()
-                .build();
-    }
+@Bean
+AuthenticationManager authenticationManager(HttpSecurity http,
+                                            PasswordEncoder passwordEncoder,
+                                            UserDetailsService userDetailsService) throws Exception {
+    return http.getSharedObject(AuthenticationManagerBuilder.class)
+            .userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder)
+            .and()
+            .build();
+}
+    // @Bean
+    // AuthenticationManager authenticationManager(HttpSecurity http,
+    //                                                    PasswordEncoder passwordEncoder,
+    //                                                    UserDetailsService userDetailsService) throws Exception {
+    //     return http.getSharedObject(AuthenticationManagerBuilder.class)
+    //             .userDetailsService(userDetailsService)
+    //             .passwordEncoder(passwordEncoder)
+    //             .and()
+    //             .build();
+    // }
 }
