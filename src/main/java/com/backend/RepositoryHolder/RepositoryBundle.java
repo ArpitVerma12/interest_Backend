@@ -9,6 +9,11 @@ import com.backend.Repository.ItemsRepository;
 import com.backend.Repository.NewCustomerRepository;
 import com.backend.Repository.SignupLoginRepository;
 import com.backend.security.JwtUtils;
+import com.backend.services.CustomerItemsWeightData;
+import com.backend.services.DepositeMoneyData;
+import com.backend.services.ExcelCustomersService;
+import com.backend.services.customerItems;
+
 
 @Component
 public class RepositoryBundle {
@@ -33,4 +38,16 @@ public class RepositoryBundle {
 	
 	@Autowired
 	public JwtUtils jwtUtils;
+
+	@Autowired
+    public ExcelCustomersService excelService;
+
+	@Autowired
+	public customerItems custItem;
+
+	@Autowired
+	public DepositeMoneyData DepositeData;
+
+	@Autowired
+	public CustomerItemsWeightData CustItemWeight;
 }

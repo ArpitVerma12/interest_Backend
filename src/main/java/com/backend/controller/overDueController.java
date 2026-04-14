@@ -30,12 +30,13 @@ public class overDueController {
 	private RepositoryBundle Repo;
 	
 
-	@GetMapping("/fetchItems")
+	@GetMapping("/fetchItemsFilter")
 	public ResponseEntity<?> fetchNewCustomer(@RequestParam("customerId") String customerId)
 	{
 		List<NewCustomerItems> items=Repo.itemsRepo.findByCustomer(customerId);
 		
 		 List<OverDureRequests> dtoList = items.stream()
+		 .filter(item -> !item.getStatus().equalsIgnoreCase("completed")) // 🔥 FILTER HERE
 			        .map(item -> {
 			            OverDureRequests dto = new OverDureRequests();
 			            LocalDateTime createdAtDateTime = item.getCreate_at();
@@ -118,7 +119,8 @@ public class overDueController {
 		              }
 		              
 		              	exists.setRentMoney(rentMoney);
-			            Repo.itemsRepo.save(exists);
+			            NewCustomerItems it=Repo.itemsRepo.save(exists);
+						Repo.custItem.saveCustomerItem(it);
 			            
 			            dto.setId(item.getId());
 			            dto.setItemName(item.getItem_name());
@@ -141,7 +143,8 @@ public class overDueController {
 			            }
 			            else {
 			            	System.out.println("NOT");
-			            dto.setRemaningAmount(item.getRemainingMoney());
+			            //dto.setRemaningAmount(item.getRemainingMoney());
+						dto.setRemaningAmount(item.getTotalMoney());
 			            dto.setTotalMoney(item.getRemainingMoney().add(rentMoney));
 			            dto.setTotalremaningAmount(item.getRemainingMoney().add(rentMoney));
 			            }
@@ -202,8 +205,10 @@ public class overDueController {
 		deposites.setDepositeMoney(deposite.getDepositeMoney());
 		deposites.setCreateDate(LocalDateTime.now());
 		//deposites.setNewCustomeritems();
-		Repo.itemsRepo.save(item);
-		Repo.depositeRepo.save(deposites);
+		NewCustomerItems saveItems= Repo.itemsRepo.save(item);
+		DepositeMoney saveDeposit=Repo.depositeRepo.save(deposites);
+		Repo.custItem.saveCustomerItem(saveItems);
+		Repo.DepositeData.saveDepositToExcel(saveDeposit);
 		return ResponseEntity.ok().body("successfully");
 		
 	}

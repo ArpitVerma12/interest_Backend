@@ -40,7 +40,13 @@ public ResponseEntity<?> addItem(@RequestBody NewCustomerItems item){
             weight.setNewCustomerItems(item); // This links the child to parent
         }
     }
-    Repo.itemsRepo.save(item);
+    NewCustomerItems items=Repo.itemsRepo.save(item);
+    Repo.custItem.saveCustomerItem(items);
+if (items.getNewCustomerWeight() != null) {
+    for (NewCustomerWeight weight : items.getNewCustomerWeight()) {
+        Repo.CustItemWeight.saveWeightToExcel(weight);
+    }
+}
         return ResponseEntity.ok("items data stored successfully");
     
 

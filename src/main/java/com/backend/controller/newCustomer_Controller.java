@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.Repository.NewCustomerRepository;
+import com.backend.RepositoryHolder.RepositoryBundle;
 import com.backend.entity.*;
 
 @RestController
@@ -24,6 +25,9 @@ public class newCustomer_Controller {
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	RepositoryBundle Repo;
 	
 	@PostMapping("/addNewCustomer")
 	public ResponseEntity<?> addCustomer(@RequestBody NewCustomer newCust){
@@ -38,8 +42,10 @@ public class newCustomer_Controller {
 		if(existEmail!=null && !existEmail.isEmpty()) {
 			return ResponseEntity.badRequest().body("email already exist");		
 		}
+		NewCustomer saveData=newCustRepo.save(newCust);
+		Repo.excelService.saveCustomerToExcel(saveData);
 		}
-		return ResponseEntity.ok().body(newCustRepo.save(newCust));
+		return ResponseEntity.ok().body("Add successfully");
 	}
 	
 	@GetMapping("/getNewCustomer")

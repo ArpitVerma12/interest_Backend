@@ -40,8 +40,9 @@ public class SignupLogin {
 
 		String hashedPassword = Repo.passwordEncoder.encode(signup.getPassword());
 		signup.setPassword(hashedPassword);
-
-		return ResponseEntity.ok(Repo.signupLoginRepo.save(signup));
+signup saveUser=Repo.signupLoginRepo.save(signup);
+// Repo.excelService.saveCustomerToExcel(saveUser);
+		return ResponseEntity.ok("Signup Successfully!!");
 	}
 
 	
