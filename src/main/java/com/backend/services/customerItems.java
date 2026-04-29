@@ -13,7 +13,7 @@ public class customerItems {
 
     private static final String BASE_PATH = "C:\\Users\\varpi\\Desktop\\GIRVI_DATA\\";
 
-    public void saveCustomerItem(NewCustomerItems item) {
+    public String saveCustomerItem(NewCustomerItems item) {
 
         try {
             NewCustomer customer = item.getNewCustomer();
@@ -78,12 +78,15 @@ public class customerItems {
             }
 
             workbook.close();
+           return "saved successfully";
+            //System.out.println(found ? "✅ UPDATED" : "✅ INSERTED");
 
-            System.out.println(found ? "✅ UPDATED" : "✅ INSERTED");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (FileNotFoundException e) {
+    throw new RuntimeException("EXCEL_OPEN");
+}
+catch (IOException e){
+    throw new RuntimeException("EXCEL_ERROR");
+}
     }
 
     // =========================

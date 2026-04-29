@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.Repository.NewCustomerRepository;
 import com.backend.RepositoryHolder.RepositoryBundle;
 import com.backend.entity.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 public class newCustomer_Controller {
@@ -31,6 +36,7 @@ public class newCustomer_Controller {
 	
 	@PostMapping("/addNewCustomer")
 	public ResponseEntity<?> addCustomer(@RequestBody NewCustomer newCust){
+		try{
 		String user_id=newCust.generateTemplateIdWithUUID();
 		String email=newCust.getEmailId();
 		String existId = newCustRepo.findByUserId(user_id);
@@ -46,7 +52,19 @@ public class newCustomer_Controller {
 		Repo.excelService.saveCustomerToExcel(saveData);
 		}
 		return ResponseEntity.ok().body("Add successfully");
-	}
+	}catch (RuntimeException e) {
+
+        if ("EXCEL_OPEN".equals(e.getMessage())) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT) // 🔥 409
+                    .body("Please close the Excel file before submitting.");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Something went wrong");
+    }
+}
 	
 	@GetMapping("/getNewCustomer")
 	public ResponseEntity<?> getNewCustomer() {
@@ -77,6 +95,58 @@ public class newCustomer_Controller {
 	    return ResponseEntity.ok(response); // <-- Fixed line
 	}
 	
+ @PutMapping("updateCustomer/{user_id}")
+ public ResponseEntity<?> updateCustomers(@PathVariable String user_id, @RequestBody NewCustomer cust) {
+
+    NewCustomer existingCustomer = Repo.newCustRepo.findByUserId1(user_id);
+
+    if (existingCustomer == null) {
+        return ResponseEntity.notFound().build();
+    }
+
+    // Update only fields sent from frontend (non-null fields)
+
+    if (cust.getName() != null) {
+        existingCustomer.setName(cust.getName());
+    }
+
+    if (cust.getEmailId() != null) {
+		System.out.println("here");
+        existingCustomer.setEmailId(cust.getEmailId() );
+    }
+
+    if (cust.getMobileNumber() != null) {
+        existingCustomer.setMobileNumber(cust.getMobileNumber());
+    }
+
+    if (cust.getAddress() != null) {
+        existingCustomer.setAddress(cust.getAddress());
+    }
+
+   if (cust.getRemark() != null) {
+        existingCustomer.setRemark(cust.getRemark());
+    }
+ if (cust.getVillage() != null) {
+        existingCustomer.setVillage(cust.getVillage());
+    }
+    NewCustomer save=Repo.newCustRepo.save(existingCustomer);
+
+    return ResponseEntity.ok(save);
+}
+
+// @DeleteMapping("/deleteCustomer/{user_id}")
+// public ResponseEntity<?> deleteCustomer(@PathVariable String user_id) {
+
+//     NewCustomer existingCustomer = Repo.newCustRepo.findByUserId1(user_id);
+
+//     if (existingCustomer == null) {
+//         return ResponseEntity.status(404).body("Customer not found");
+//     }
+
+//     Repo.newCustRepo.delete(existingCustomer);
+
+//     return ResponseEntity.ok("Customer deleted successfully");
+// }
     @GetMapping("/getVillages")
     public List<Map<String, Object>> getAllVillages() {
         String sql = "SELECT id, village_name FROM villages ORDER BY village_name ASC;";

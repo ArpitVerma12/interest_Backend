@@ -114,8 +114,11 @@ private String formatDateTime(LocalDateTime dt) {
 
         System.out.println(found ? "✅ Deposit UPDATED" : "✅ Deposit INSERTED");
 
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+    }catch (FileNotFoundException e) {
+    throw new RuntimeException("EXCEL_OPEN");
 }
+catch (IOException e){
+    throw new RuntimeException("EXCEL_ERROR");
+}
+    }
 }

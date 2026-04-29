@@ -26,4 +26,5 @@ public class OverDureRequests {
 	 private String Remark;
 	 private BigDecimal remaningAmount;
 	 private BigDecimal totalremaningAmount;
+	 private String status;
 }

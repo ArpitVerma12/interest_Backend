@@ -2,7 +2,9 @@ package com.backend.services;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.backend.entity.NewCustomer;
 import com.backend.entity.NewCustomerItems;
 import com.backend.entity.NewCustomerWeight;
+
 
 @Service
 public class CustomerItemsWeightData {
@@ -89,8 +92,12 @@ private String getString(Object val) {
 
         System.out.println(found ? "✅ Weight UPDATED" : "✅ Weight INSERTED");
 
-    } catch (Exception e) {
-        e.printStackTrace();
+    } catch (FileNotFoundException e) {
+    throw new RuntimeException("EXCEL_OPEN");
+}
+catch (IOException e){
+    throw new RuntimeException("EXCEL_ERROR");
+}
     }
 }
-}
+

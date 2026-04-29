@@ -63,8 +63,11 @@ public class ExcelCustomersService {
             fos.close();
             workbook.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        } catch (FileNotFoundException e) {
+    throw new RuntimeException("EXCEL_OPEN");
 }
+catch (IOException e){
+    throw new RuntimeException("EXCEL_ERROR");
+}
+    }
+    }

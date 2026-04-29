@@ -1,6 +1,7 @@
 package com.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class items_controller {
 public ResponseEntity<?> addItem(@RequestBody NewCustomerItems item){
     
 
-	
+	try{
     if (item.getNewCustomer() != null && item.getNewCustomer().getUser_id() != null) {
         // 🔄 Get the managed (persistent) NewCustomer entity
         NewCustomer existingCustomer = Repo.newCustRepo.findByUserId1(item.getNewCustomer().getUser_id());
@@ -41,15 +42,29 @@ public ResponseEntity<?> addItem(@RequestBody NewCustomerItems item){
         }
     }
     NewCustomerItems items=Repo.itemsRepo.save(item);
+
     Repo.custItem.saveCustomerItem(items);
 if (items.getNewCustomerWeight() != null) {
     for (NewCustomerWeight weight : items.getNewCustomerWeight()) {
         Repo.CustItemWeight.saveWeightToExcel(weight);
     }
 }
-        return ResponseEntity.ok("items data stored successfully");
     
+return ResponseEntity.ok("items data stored successfully");
 
+
+}catch (RuntimeException e) {
+
+        if ("EXCEL_OPEN".equals(e.getMessage())) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT) // 🔥 409
+                    .body("Please close the Excel file before submitting.");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Something went wrong");
+    }
 }
 
 @GetMapping("/getItems")

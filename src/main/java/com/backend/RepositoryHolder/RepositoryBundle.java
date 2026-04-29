@@ -12,6 +12,7 @@ import com.backend.security.JwtUtils;
 import com.backend.services.CustomerItemsWeightData;
 import com.backend.services.DepositeMoneyData;
 import com.backend.services.ExcelCustomersService;
+import com.backend.services.ItemCalculationService;
 import com.backend.services.customerItems;
 
 
@@ -50,4 +51,7 @@ public class RepositoryBundle {
 
 	@Autowired
 	public CustomerItemsWeightData CustItemWeight;
+
+	@Autowired
+	public ItemCalculationService itemCalculation;
 }
